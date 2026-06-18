@@ -42,4 +42,13 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const customer = (req, res, next) => {
+  if (req.user && req.user.role === 'customer') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Not authorized as a customer' });
+  }
+};
+
+module.exports = { protect, admin, customer };
+

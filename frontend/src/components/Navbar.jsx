@@ -35,7 +35,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to={isAdmin ? "/admin" : "/"} className="flex items-center space-x-2">
               <span className="text-2xl font-extrabold tracking-tight text-nursery-700 font-sans">
                 🍃 Leafy<span className="text-accent-terracotta">Loop</span>
               </span>
@@ -44,12 +44,16 @@ export default function Navbar() {
 
           {/* Navigation Links (Desktop) */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-sm font-medium text-neutral-600 hover:text-nursery-650 transition-colors">
-              Home
-            </Link>
-            <Link to="/catalog" className="text-sm font-medium text-neutral-600 hover:text-nursery-650 transition-colors">
-              Shop Plants
-            </Link>
+            {!isAdmin && (
+              <>
+                <Link to="/" className="text-sm font-medium text-neutral-600 hover:text-nursery-650 transition-colors">
+                  Home
+                </Link>
+                <Link to="/catalog" className="text-sm font-medium text-neutral-600 hover:text-nursery-650 transition-colors">
+                  Shop Plants
+                </Link>
+              </>
+            )}
             <Link to="/blog" className="text-sm font-medium text-neutral-600 hover:text-nursery-650 transition-colors">
               Care Blog
             </Link>
@@ -58,7 +62,7 @@ export default function Navbar() {
           {/* Action Icons (Desktop) */}
           <div className="hidden md:flex items-center space-x-6">
             {/* Wishlist Link */}
-            {user && (
+            {user && !isAdmin && (
               <Link to="/profile?tab=wishlist" className="relative text-neutral-600 hover:text-accent-terracotta transition-colors p-1" title="Wishlist">
                 <Heart className="h-6 w-6" />
                 {user.wishlist?.length > 0 && (
@@ -70,14 +74,16 @@ export default function Navbar() {
             )}
 
             {/* Shopping Cart Link */}
-            <Link to="/cart" className="relative text-neutral-600 hover:text-nursery-600 transition-colors p-1" title="Shopping Cart">
-              <ShoppingBag className="h-6 w-6" />
-              {totalCartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-nursery-600 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                  {totalCartCount}
-                </span>
-              )}
-            </Link>
+            {!isAdmin && (
+              <Link to="/cart" className="relative text-neutral-600 hover:text-nursery-600 transition-colors p-1" title="Shopping Cart">
+                <ShoppingBag className="h-6 w-6" />
+                {totalCartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-nursery-600 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {totalCartCount}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {/* User Dropdown / Auth Links */}
             {user ? (
@@ -141,14 +147,16 @@ export default function Navbar() {
 
           {/* Hamburger Menu button (Mobile) */}
           <div className="md:hidden flex items-center space-x-4">
-            <Link to="/cart" className="relative text-neutral-600 p-1">
-              <ShoppingBag className="h-6 w-6" />
-              {totalCartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-nursery-600 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                  {totalCartCount}
-                </span>
-              )}
-            </Link>
+            {!isAdmin && (
+              <Link to="/cart" className="relative text-neutral-600 p-1">
+                <ShoppingBag className="h-6 w-6" />
+                {totalCartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-nursery-600 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {totalCartCount}
+                  </span>
+                )}
+              </Link>
+            )}
             
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -163,20 +171,24 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden border-t border-neutral-100 bg-white/95 backdrop-blur-md px-4 pt-2 pb-4 space-y-2 animate-in slide-in-from-top-5 duration-200">
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-neutral-700 hover:bg-neutral-50 hover:text-nursery-600"
-          >
-            Home
-          </Link>
-          <Link
-            to="/catalog"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-neutral-700 hover:bg-neutral-50 hover:text-nursery-600"
-          >
-            Shop Plants
-          </Link>
+          {!isAdmin && (
+            <>
+              <Link
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 rounded-lg text-base font-medium text-neutral-700 hover:bg-neutral-50 hover:text-nursery-600"
+              >
+                Home
+              </Link>
+              <Link
+                to="/catalog"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 rounded-lg text-base font-medium text-neutral-700 hover:bg-neutral-50 hover:text-nursery-600"
+              >
+                Shop Plants
+              </Link>
+            </>
+          )}
           <Link
             to="/blog"
             onClick={() => setIsOpen(false)}
@@ -185,7 +197,7 @@ export default function Navbar() {
             Care Blog
           </Link>
           
-          {user && (
+          {user && !isAdmin && (
             <Link
               to="/profile?tab=wishlist"
               onClick={() => setIsOpen(false)}

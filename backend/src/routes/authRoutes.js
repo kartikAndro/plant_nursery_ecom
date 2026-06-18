@@ -12,7 +12,7 @@ const {
   requestPasswordReset,
   confirmPasswordReset
 } = require('../controllers/authController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, customer } = require('../middleware/authMiddleware');
 
 // Public Auth routes
 router.post('/register', registerUser);
@@ -26,13 +26,13 @@ router.route('/profile')
   .put(protect, updateUserProfile);
 
 router.route('/profile/wishlist')
-  .post(protect, toggleUserWishlist);
+  .post(protect, customer, toggleUserWishlist);
 
 router.route('/profile/addresses')
-  .post(protect, addUserAddress);
+  .post(protect, customer, addUserAddress);
 
 router.route('/profile/addresses/:id')
-  .put(protect, updateUserAddress)
-  .delete(protect, deleteUserAddress);
+  .put(protect, customer, updateUserAddress)
+  .delete(protect, customer, deleteUserAddress);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -17,6 +17,24 @@ import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
+function CustomerOnlyRoute({ children }) {
+  const { user, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center items-center">
+        <div className="h-10 w-10 border-4 border-nursery-200 border-t-nursery-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (user && isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -29,11 +47,11 @@ export default function App() {
             {/* Main viewports */}
             <main className="flex-grow">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/" element={<CustomerOnlyRoute><Home /></CustomerOnlyRoute>} />
+                <Route path="/catalog" element={<CustomerOnlyRoute><Catalog /></CustomerOnlyRoute>} />
+                <Route path="/products/:id" element={<CustomerOnlyRoute><ProductDetail /></CustomerOnlyRoute>} />
+                <Route path="/cart" element={<CustomerOnlyRoute><Cart /></CustomerOnlyRoute>} />
+                <Route path="/checkout" element={<CustomerOnlyRoute><Checkout /></CustomerOnlyRoute>} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/admin" element={<AdminDashboard />} />

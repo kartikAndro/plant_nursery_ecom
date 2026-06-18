@@ -6,11 +6,11 @@ const {
   getOrders,
   updateOrderStatus,
 } = require('../controllers/orderController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin, customer } = require('../middleware/authMiddleware');
 
 // User order routes
-router.route('/').post(protect, addOrderItems);
-router.route('/my-orders').get(protect, getMyOrders);
+router.route('/').post(protect, customer, addOrderItems);
+router.route('/my-orders').get(protect, customer, getMyOrders);
 
 // Admin order routes
 router.route('/').get(protect, admin, getOrders);

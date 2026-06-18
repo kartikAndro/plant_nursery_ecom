@@ -11,7 +11,8 @@ import {
   Plus, 
   Check, 
   Edit2, 
-  Lock 
+  Lock,
+  LayoutDashboard
 } from 'lucide-react';
 
 const API_BASE = 'http://localhost:5000/api';
@@ -33,7 +34,8 @@ export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Tab state synchronizations
-  const activeTab = searchParams.get('tab') || 'details';
+  const isAdmin = user?.role === 'admin';
+  const activeTab = isAdmin ? 'details' : (searchParams.get('tab') || 'details');
 
   // Customer orders lists
   const [orders, setOrders] = useState([]);
@@ -219,39 +221,53 @@ export default function Profile() {
               <User className="h-4 w-4 mr-2.5 text-neutral-400" />
               Account Details
             </button>
-            <button
-              onClick={() => handleTabChange('addresses')}
-              className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
-                activeTab === 'addresses'
-                  ? 'bg-nursery-50 text-nursery-700 shadow-sm'
-                  : 'text-neutral-600 hover:bg-neutral-50'
-              }`}
-            >
-              <MapPin className="h-4 w-4 mr-2.5 text-neutral-400" />
-              Delivery Address Book ({user.addresses?.length || 0})
-            </button>
-            <button
-              onClick={() => handleTabChange('orders')}
-              className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
-                activeTab === 'orders'
-                  ? 'bg-nursery-50 text-nursery-700 shadow-sm'
-                  : 'text-neutral-600 hover:bg-neutral-50'
-              }`}
-            >
-              <ShoppingBag className="h-4 w-4 mr-2.5 text-neutral-400" />
-              My Orders List
-            </button>
-            <button
-              onClick={() => handleTabChange('wishlist')}
-              className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
-                activeTab === 'wishlist'
-                  ? 'bg-nursery-50 text-nursery-700 shadow-sm'
-                  : 'text-neutral-600 hover:bg-neutral-50'
-              }`}
-            >
-              <Heart className="h-4 w-4 mr-2.5 text-neutral-400" />
-              My Wishlist ({user.wishlist?.length || 0})
-            </button>
+            {!isAdmin && (
+              <>
+                <button
+                  onClick={() => handleTabChange('addresses')}
+                  className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
+                    activeTab === 'addresses'
+                      ? 'bg-nursery-50 text-nursery-700 shadow-sm'
+                      : 'text-neutral-600 hover:bg-neutral-50'
+                  }`}
+                >
+                  <MapPin className="h-4 w-4 mr-2.5 text-neutral-400" />
+                  Delivery Address Book ({user.addresses?.length || 0})
+                </button>
+                <button
+                  onClick={() => handleTabChange('orders')}
+                  className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
+                    activeTab === 'orders'
+                      ? 'bg-nursery-50 text-nursery-700 shadow-sm'
+                      : 'text-neutral-600 hover:bg-neutral-50'
+                  }`}
+                >
+                  <ShoppingBag className="h-4 w-4 mr-2.5 text-neutral-400" />
+                  My Orders List
+                </button>
+                <button
+                  onClick={() => handleTabChange('wishlist')}
+                  className={`flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl transition-all ${
+                    activeTab === 'wishlist'
+                      ? 'bg-nursery-50 text-nursery-700 shadow-sm'
+                      : 'text-neutral-600 hover:bg-neutral-50'
+                  }`}
+                >
+                  <Heart className="h-4 w-4 mr-2.5 text-neutral-400" />
+                  My Wishlist ({user.wishlist?.length || 0})
+                </button>
+              </>
+            )}
+
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="flex items-center w-full px-4 py-3 text-xs font-semibold rounded-xl text-neutral-600 hover:bg-neutral-50 transition-colors"
+              >
+                <LayoutDashboard className="h-4 w-4 mr-2.5 text-neutral-400" />
+                Admin Dashboard
+              </Link>
+            )}
 
             <button
               onClick={logout}
