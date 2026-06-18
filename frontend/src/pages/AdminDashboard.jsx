@@ -111,6 +111,55 @@ export default function AdminDashboard() {
   const [blogTags, setBlogTags] = useState('');
   const [blogReadTime, setBlogReadTime] = useState('5 min read');
 
+  // Blog Image Upload State
+  const [blogImageUploading, setBlogImageUploading] = useState(false);
+
+  const handleBlogImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only image files (JPEG, PNG, WEBP) are allowed');
+      return;
+    }
+
+    // Validate file size (2MB limit)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('Image size must be less than 2MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setBlogImageUploading(true);
+    try {
+      const res = await fetch(`${API_BASE}/blogs/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBlogImg(data.imageUrl);
+      } else {
+        const d = await res.json();
+        alert(d.message || 'Image upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error uploading image');
+    } finally {
+      setBlogImageUploading(false);
+    }
+  };
+
   // Redirect non-admins
   useEffect(() => {
     if (!user || user.role !== 'admin') {
@@ -268,6 +317,24 @@ export default function AdminDashboard() {
   // Blog CRUD Handlers
   const handleBlogSubmit = async (e) => {
     e.preventDefault();
+
+    // Field validations
+    if (!blogTitle.trim() || blogTitle.trim().length < 5) {
+      alert('Title must be at least 5 characters long');
+      return;
+    }
+    if (!blogContent.trim() || blogContent.trim().length < 20) {
+      alert('Content must be at least 20 characters long');
+      return;
+    }
+    if (!blogExcerpt.trim() || blogExcerpt.trim().length < 10) {
+      alert('Excerpt must be at least 10 characters long');
+      return;
+    }
+    if (!blogImg) {
+      alert('Please upload a blog cover image');
+      return;
+    }
 
     const payload = {
       title: blogTitle,
@@ -973,15 +1040,33 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-neutral-600">Image Cover URL</label>
+                <label className="font-bold text-neutral-600">Blog Cover Image File</label>
                 <input
-                  type="text"
-                  required
-                  value={blogImg}
-                  onChange={(e) => setBlogImg(e.target.value)}
-                  placeholder="Paste Unsplash image URL link"
-                  className="w-full bg-white border p-2.5 rounded-lg text-sm"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBlogImageUpload}
+                  className="w-full bg-white border p-2.5 rounded-lg text-sm cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-nursery-50 file:text-nursery-700 hover:file:bg-nursery-100"
                 />
+                {blogImageUploading && (
+                  <p className="text-xs text-neutral-450 animate-pulse mt-1">Uploading image...</p>
+                )}
+                {blogImg && (
+                  <div className="mt-2.5 relative inline-block">
+                    <img
+                      src={blogImg}
+                      alt="Blog cover preview"
+                      className="h-24 w-24 object-cover rounded-xl border bg-neutral-50 shadow-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setBlogImg('')}
+                      className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 focus:outline-none shadow-md transition-all"
+                      title="Remove image"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1">

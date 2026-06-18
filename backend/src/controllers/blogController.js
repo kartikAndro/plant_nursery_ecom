@@ -54,6 +54,20 @@ const createBlog = async (req, res) => {
   try {
     const { title, content, excerpt, imageUrl, tags, readTime } = req.body;
 
+    // Field validations
+    if (!title || title.trim().length < 5) {
+      return res.status(400).json({ message: 'Title must be at least 5 characters long' });
+    }
+    if (!content || content.trim().length < 20) {
+      return res.status(400).json({ message: 'Content must be at least 20 characters long' });
+    }
+    if (!excerpt || excerpt.trim().length < 10) {
+      return res.status(400).json({ message: 'Excerpt must be at least 10 characters long' });
+    }
+    if (!imageUrl) {
+      return res.status(400).json({ message: 'Blog cover image is required' });
+    }
+
     const blog = new Blog({
       title,
       content,
@@ -78,6 +92,21 @@ const createBlog = async (req, res) => {
 const updateBlog = async (req, res) => {
   try {
     const { title, content, excerpt, imageUrl, tags, readTime } = req.body;
+
+    // Field validations
+    if (title !== undefined && title.trim().length < 5) {
+      return res.status(400).json({ message: 'Title must be at least 5 characters long' });
+    }
+    if (content !== undefined && content.trim().length < 20) {
+      return res.status(400).json({ message: 'Content must be at least 20 characters long' });
+    }
+    if (excerpt !== undefined && excerpt.trim().length < 10) {
+      return res.status(400).json({ message: 'Excerpt must be at least 10 characters long' });
+    }
+    if (imageUrl !== undefined && !imageUrl) {
+      return res.status(400).json({ message: 'Blog cover image is required' });
+    }
+
     const blog = await Blog.findById(req.params.id);
 
     if (blog) {
