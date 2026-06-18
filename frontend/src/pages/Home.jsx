@@ -9,11 +9,11 @@ export default function Home() {
 
   const categories = [
     { name: 'Indoor Plants', img: 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=250&q=80' },
-    { name: 'Outdoor Plants', img: 'https://images.unsplash.com/photo-1528826722302-d4758b9ebed4?auto=format&fit=crop&w=250&q=80' },
-    { name: 'Succulents', img: 'https://images.unsplash.com/photo-1596547613758-c10b57e793cb?auto=format&fit=crop&w=250&q=80' },
-    { name: 'Bonsai', img: 'https://images.unsplash.com/photo-1613143715124-7389a9dbd178?auto=format&fit=crop&w=250&q=80' },
-    { name: 'Seeds', img: 'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&w=250&q=80' },
-    { name: 'Pots & Accessories', img: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=250&q=80' },
+    { name: 'Outdoor Plants', img: 'https://images.pexels.com/photos/31584497/pexels-photo-31584497.jpeg' },
+    { name: 'Succulents', img: 'https://images.pexels.com/photos/36620942/pexels-photo-36620942.jpeg' },
+    { name: 'Bonsai', img: 'https://images.pexels.com/photos/17146325/pexels-photo-17146325.jpeg' },
+    { name: 'Seeds', img: 'https://images.pexels.com/photos/36791879/pexels-photo-36791879.jpeg' },
+    { name: 'Pots & Accessories', img: 'https://images.pexels.com/photos/7167633/pexels-photo-7167633.jpeg' },
   ];
 
   useEffect(() => {
@@ -78,25 +78,25 @@ export default function Home() {
           <div className="lg:col-span-5 flex justify-center">
             <div className="glass-panel-dark text-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative border border-white/10">
               <img
-                src="https://images.unsplash.com/photo-1597055181300-e3633a207518?auto=format&fit=crop&w=450&q=80"
+                src="https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=600&q=80"
                 alt="Fiddle Leaf Fig"
                 className="w-full h-56 object-cover rounded-2xl mb-4"
               />
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-[10px] text-nursery-300 uppercase tracking-widest font-semibold">Featured Collector Choice</span>
-                  <h3 className="font-bold text-lg text-neutral-100">Fiddle Leaf Fig (Ficus Lyrata)</h3>
+                  <h3 className="font-bold text-lg text-neutral-100">Snake Plant (Sansevieria Laurentii)</h3>
                 </div>
-                <span className="text-xl font-black text-nursery-400">$59.99</span>
+                <span className="text-xl font-black text-nursery-400">$29.99</span>
               </div>
               <p className="text-xs text-neutral-450 mt-2 leading-relaxed">
-                Add an iconic statement with this glossy, violin-leafed plant. Includes detailed indoor care tags.
+                The Snake Plant is one of the hardiest house plants available. Featuring striking upright sword-like green leaves with yellow margins, it is highly efficient at filtering indoor air.
               </p>
               <Link
                 to="/catalog"
                 className="mt-4 w-full flex items-center justify-center py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all"
               >
-                View Details
+                Browse More
               </Link>
             </div>
           </div>
