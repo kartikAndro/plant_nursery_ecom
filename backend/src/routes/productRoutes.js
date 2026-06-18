@@ -45,18 +45,32 @@ function checkFileType(file, cb) {
 
 const upload = multer({
   storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
 });
 
+const uploadSingle = upload.single('image');
+
 // Routes
-router.post('/upload', protect, admin, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-  res.json({ imageUrl: fileUrl });
+router.post('/upload', protect, admin, (req, res) => {
+  uploadSingle(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'Image size must be less than 2MB' });
+      }
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.json({ imageUrl: fileUrl });
+  });
 });
 
 router.route('/')

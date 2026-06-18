@@ -61,6 +61,20 @@ export default function AdminDashboard() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only image files (JPEG, PNG, WEBP) are allowed');
+      return;
+    }
+
+    // Validate file size (2MB limit)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('Image size must be less than 2MB');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('image', file);
 
@@ -141,6 +155,28 @@ export default function AdminDashboard() {
   // Product CRUD Handlers
   const handleProductSubmit = async (e) => {
     e.preventDefault();
+
+    // Field validations
+    if (!prodName.trim() || prodName.trim().length < 3) {
+      alert('Product title must be at least 3 characters long');
+      return;
+    }
+    if (prodPrice === undefined || Number(prodPrice) <= 0) {
+      alert('Price must be greater than 0');
+      return;
+    }
+    if (prodStock === undefined || Number(prodStock) < 0) {
+      alert('Stock cannot be negative');
+      return;
+    }
+    if (!prodDesc.trim() || prodDesc.trim().length < 10) {
+      alert('Description must be at least 10 characters long');
+      return;
+    }
+    if (!prodImg) {
+      alert('Please upload a product image');
+      return;
+    }
 
     const payload = {
       name: prodName,

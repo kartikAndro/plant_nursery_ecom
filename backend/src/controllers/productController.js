@@ -128,6 +128,23 @@ const createProduct = async (req, res) => {
       indoorOutdoor
     } = req.body;
 
+    // Field validations
+    if (!name || name.trim().length < 3) {
+      return res.status(400).json({ message: 'Product title must be at least 3 characters long' });
+    }
+    if (price === undefined || Number(price) <= 0) {
+      return res.status(400).json({ message: 'Price must be greater than 0' });
+    }
+    if (stock === undefined || Number(stock) < 0) {
+      return res.status(400).json({ message: 'Stock cannot be negative' });
+    }
+    if (!description || description.trim().length < 10) {
+      return res.status(400).json({ message: 'Description must be at least 10 characters long' });
+    }
+    if (!images || images.length === 0 || !images[0]) {
+      return res.status(400).json({ message: 'Product image is required' });
+    }
+
     const product = new Product({
       name,
       price,
@@ -169,6 +186,23 @@ const updateProduct = async (req, res) => {
       growthInfo,
       indoorOutdoor
     } = req.body;
+
+    // Field validations
+    if (name !== undefined && name.trim().length < 3) {
+      return res.status(400).json({ message: 'Product title must be at least 3 characters long' });
+    }
+    if (price !== undefined && Number(price) <= 0) {
+      return res.status(400).json({ message: 'Price must be greater than 0' });
+    }
+    if (stock !== undefined && Number(stock) < 0) {
+      return res.status(400).json({ message: 'Stock cannot be negative' });
+    }
+    if (description !== undefined && description.trim().length < 10) {
+      return res.status(400).json({ message: 'Description must be at least 10 characters long' });
+    }
+    if (images !== undefined && (images.length === 0 || !images[0])) {
+      return res.status(400).json({ message: 'Product image is required' });
+    }
 
     const product = await Product.findById(req.params.id);
 
