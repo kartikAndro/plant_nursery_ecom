@@ -54,6 +54,41 @@ export default function AdminDashboard() {
   const [prodGrowth, setProdGrowth] = useState('');
   const [prodIndoorOutdoor, setProdIndoorOutdoor] = useState('Indoor');
 
+  // Image Upload State
+  const [imageUploading, setImageUploading] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setImageUploading(true);
+    try {
+      const res = await fetch(`${API_BASE}/products/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setProdImg(data.imageUrl);
+      } else {
+        const d = await res.json();
+        alert(d.message || 'Image upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error uploading image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
   // Form: Blog fields
   const [blogTitle, setBlogTitle] = useState('');
   const [blogExcerpt, setBlogExcerpt] = useState('');
@@ -255,6 +290,25 @@ export default function AdminDashboard() {
       if (res.ok) fetchAllData();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleUserDelete = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user account? All associated orders and reviews will also be removed.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchAllData();
+      } else {
+        const d = await res.json();
+        alert(d.message || 'Failed to delete user');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting user');
     }
   };
 
@@ -541,6 +595,7 @@ export default function AdminDashboard() {
                       <th className="p-3">Role</th>
                       <th className="p-3">Completed Purchases</th>
                       <th className="p-3">Date Registered</th>
+                      <th className="p-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
@@ -557,6 +612,17 @@ export default function AdminDashboard() {
                         </td>
                         <td className="p-3 font-bold text-neutral-800">{c.orderCount || 0} orders</td>
                         <td className="p-3 text-neutral-400">{new Date(c.createdAt).toLocaleDateString()}</td>
+                        <td className="p-3 text-right">
+                          {c._id !== user?._id && (
+                            <button
+                              onClick={() => handleUserDelete(c._id)}
+                              className="p-1 text-neutral-400 hover:text-red-650 transition-colors"
+                              title="Delete User"
+                            >
+                              <Trash2 className="h-4.5 w-4.5" />
+                            </button>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -725,14 +791,33 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-neutral-600">Image URL String</label>
+                <label className="font-bold text-neutral-600">Product Image File</label>
                 <input
-                  type="text"
-                  value={prodImg}
-                  onChange={(e) => setProdImg(e.target.value)}
-                  placeholder="Paste Unsplash or static image URL link"
-                  className="w-full bg-white border p-2.5 rounded-lg text-sm"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full bg-white border p-2.5 rounded-lg text-sm cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-nursery-50 file:text-nursery-700 hover:file:bg-nursery-100"
                 />
+                {imageUploading && (
+                  <p className="text-xs text-neutral-450 animate-pulse mt-1">Uploading image...</p>
+                )}
+                {prodImg && (
+                  <div className="mt-2.5 relative inline-block">
+                    <img
+                      src={prodImg}
+                      alt="Product preview"
+                      className="h-24 w-24 object-cover rounded-xl border bg-neutral-50 shadow-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setProdImg('')}
+                      className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 focus:outline-none shadow-md transition-all"
+                      title="Remove image"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-neutral-100 pt-3">
