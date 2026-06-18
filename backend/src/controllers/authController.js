@@ -14,6 +14,25 @@ const generateToken = (id) => {
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
+  // Input validations
+  if (!name || name.trim().length < 2) {
+    return res.status(400).json({ message: 'Name must be at least 2 characters long' });
+  }
+
+  const nameRegex = /^[a-zA-Z\s'-]+$/;
+  if (!nameRegex.test(name)) {
+    return res.status(400).json({ message: 'Name can only contain letters, spaces, hyphens, or apostrophes' });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Please enter a valid email address' });
+  }
+
+  if (!password || password.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+  }
+
   try {
     const userExists = await User.findOne({ email });
 

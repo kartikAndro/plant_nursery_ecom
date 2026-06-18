@@ -23,6 +23,29 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
+    // Input validations
+    if (!name.trim()) {
+      setError('Name is required');
+      return;
+    }
+    if (name.trim().length < 2) {
+      setError('Name must be at least 2 characters long');
+      return;
+    }
+    const nameRegex = /^[a-zA-Z\s'-]+$/;
+    if (!nameRegex.test(name)) {
+      setError('Name can only contain letters, spaces, hyphens, or apostrophes');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
