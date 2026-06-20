@@ -17,7 +17,7 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch('https://plant-nursery-ecom.onrender.com/api/products')
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

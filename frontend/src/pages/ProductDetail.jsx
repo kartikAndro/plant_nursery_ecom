@@ -48,7 +48,7 @@ export default function ProductDetail() {
 
   // Fetch product detail
   const fetchProduct = () => {
-    fetch(`http://localhost:5000/api/products/${id}`)
+    fetch(`https://plant-nursery-ecom.onrender.com/api/products/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Product not found');
         return res.json();
@@ -130,7 +130,7 @@ export default function ProductDetail() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews`, {
+      const res = await fetch(`https://plant-nursery-ecom.onrender.com/api/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ export default function ProductDetail() {
   const handleReviewDelete = async (reviewId) => {
     if (!window.confirm('Are you sure you want to delete this review?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+      const res = await fetch(`https://plant-nursery-ecom.onrender.com/api/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -180,7 +180,7 @@ export default function ProductDetail() {
   // Edit review save trigger
   const handleReviewEditSave = async (reviewId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+      const res = await fetch(`https://plant-nursery-ecom.onrender.com/api/reviews/${reviewId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ export default function Blog() {
       if (search) params.append('search', search);
       if (selectedTag && selectedTag !== 'All') params.append('tag', selectedTag);
 
-      fetch(`http://localhost:5000/api/blogs?${params.toString()}`)
+      fetch(`https://plant-nursery-ecom.onrender.com/api/blogs?${params.toString()}`)
         .then((res) => res.json())
         .then((data) => {
           setBlogs(data);
@@ -52,7 +52,7 @@ export default function Blog() {
   useEffect(() => {
     if (selectedBlogId) {
       setDetailLoading(true);
-      fetch(`http://localhost:5000/api/blogs/${selectedBlogId}`)
+      fetch(`https://plant-nursery-ecom.onrender.com/api/blogs/${selectedBlogId}`)
         .then((res) => res.json())
         .then((data) => {
           setBlogDetail(data);

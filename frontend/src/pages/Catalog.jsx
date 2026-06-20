@@ -67,7 +67,7 @@ export default function Catalog() {
     if (availabilityOnly) params.append('availability', 'true');
     params.append('sortBy', sortBy);
 
-    fetch(`http://localhost:5000/api/products?${params.toString()}`)
+    fetch(`https://plant-nursery-ecom.onrender.com/api/products?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

@@ -15,7 +15,7 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://plant-nursery-ecom.onrender.com/api';
 
 export default function Profile() {
   const { 

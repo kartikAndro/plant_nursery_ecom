@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { MapPin, CreditCard, ChevronRight, CheckCircle, Plus } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://plant-nursery-ecom.onrender.com/api';
 
 export default function Checkout() {
   const { user, token, addAddress } = useAuth();
