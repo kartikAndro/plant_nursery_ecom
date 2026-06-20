@@ -4,52 +4,147 @@ import { Mail, Phone, MapPin, Send, Check } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubscribe = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
+    setErrorMsg('');
+    setSubmitStatus(null);
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      setErrorMsg('Email is required');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setErrorMsg('Please enter a valid email address');
+      return;
+    }
+
+    // Message validation
+    if (!message.trim()) {
+      setErrorMsg('Message is required');
+      return;
+    }
+    if (message.trim().length < 10) {
+      setErrorMsg('Message must be at least 10 characters long');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const accessKey = '6cd20776-3877-41c0-96ab-d94c2a95f270';
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          email: email.trim(),
+          message: message.trim(),
+          subject: 'LeafyLoop Contact Form Submission',
+          from_name: 'LeafyLoop Footer Form',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitStatus('success');
+        setEmail('');
+        setMessage('');
+        setTimeout(() => setSubmitStatus(null), 5000);
+      } else {
+        setSubmitStatus('error');
+        setErrorMsg(data.message || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSubmitStatus('error');
+      setErrorMsg('Network error. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <footer className="bg-nursery-950 text-neutral-400 font-sans border-t border-neutral-800">
-      {/* Top Section / Newsletter */}
+      {/* Top Section / Contact Form */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-neutral-850">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-          <div className="lg:col-span-2">
-            <h3 className="text-xl font-bold text-white tracking-wide">
-              Keep your inbox green 🌿
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-1">
+            <h3 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
+              Send us a message 🌿
             </h3>
-            <p className="mt-2 text-sm text-neutral-450 max-w-xl">
-              Subscribe to LeafyLoop newsletter for plant care checklists, exclusive nursery discounts, and early access to new plant drops.
+            <p className="mt-2 text-sm text-neutral-450 leading-relaxed">
+              Have questions about plant care, designer pots, or your order? Reach out to our nursery experts directly using Web3Forms.
             </p>
           </div>
-          <div>
-            <form onSubmit={handleSubscribe} className="flex relative">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full bg-neutral-800 text-white pl-4 pr-12 py-3 rounded-lg border border-neutral-700 focus:outline-none focus:border-nursery-500 text-sm transition-all"
-              />
-              <button
-                type="submit"
-                className="absolute right-1 top-1 bottom-1 bg-nursery-600 hover:bg-nursery-500 text-white px-4 rounded-md transition-colors flex items-center justify-center focus:outline-none"
-              >
-                {subscribed ? <Check className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-              </button>
+          <div className="lg:col-span-2">
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your email address"
+                    className="w-full bg-neutral-800 text-white px-4 py-3 rounded-lg border border-neutral-700 focus:outline-none focus:border-nursery-500 text-sm transition-all"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <textarea
+                    required
+                    rows="3"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Your message (min 10 characters)"
+                    className="w-full bg-neutral-800 text-white px-4 py-3 rounded-lg border border-neutral-700 focus:outline-none focus:border-nursery-500 text-sm transition-all resize-none"
+                  />
+                </div>
+              </div>
+
+              {errorMsg && (
+                <p className="text-xs text-red-500 font-semibold mt-1">
+                  ⚠️ {errorMsg}
+                </p>
+              )}
+
+              {submitStatus === 'success' && (
+                <p className="text-xs text-nursery-400 font-semibold mt-1 flex items-center gap-1.5">
+                  <Check className="h-4 w-4" /> Message sent successfully! We'll reply soon.
+                </p>
+              )}
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-nursery-600 hover:bg-nursery-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
-            {subscribed && (
-              <p className="text-xs text-nursery-400 mt-2 animate-pulse">
-                Thanks for subscribing! Check your inbox soon.
-              </p>
-            )}
           </div>
         </div>
       </div>
